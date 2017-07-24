@@ -16,30 +16,6 @@
 
 <title>Practical Machine Learning: Course Project</title>
 
-<script src="ML_course_project_files/jquery-1.11.3/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="ML_course_project_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
-<script src="ML_course_project_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="ML_course_project_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="ML_course_project_files/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="ML_course_project_files/navigation-1.1/tabsets.js"></script>
-<link href="ML_course_project_files/highlightjs-1.1/default.css" rel="stylesheet" />
-<script src="ML_course_project_files/highlightjs-1.1/highlight.js"></script>
-
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
-<script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
-}
-</script>
-
 
 
 <style type="text/css">
@@ -521,28 +497,4 @@ df[order(df$X1), ]</code></pre>
 
 </div>
 
-<script>
 
-// add bootstrap table styles to pandoc tables
-function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
-}
-$(document).ready(function () {
-  bootstrapStylePandocTables();
-});
-
-
-</script>
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-
-</body>
-</html>

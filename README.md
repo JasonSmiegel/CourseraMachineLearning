@@ -211,8 +211,7 @@ pedro_sm_pml_train &lt;- sm_pml_train[sm_pml_train$user_name == &quot;pedro&quot
 </div>
 <p>From each sensor the following measures are available: - roll - pitch - yaw - total accel - gyros (x, y, z) - accel (x, y, z) - magnet (x, y, z)</p>
 <div class="figure">
-<img src="200px-Flight_dynamics_with_text.png" alt="https://commons.wikimedia.org/w/index.php?curid=2564219" />
-<p class="caption"><a href="https://commons.wikimedia.org/w/index.php?curid=2564219" class="uri">https://commons.wikimedia.org/w/index.php?curid=2564219</a></p>
+<img src="ML_course_project_files/figure-html200px-Flight_dynamics_with_text.png" alt="https://commons.wikimedia.org/w/index.php?curid=2564219" />
 </div>
 <p>Thinking through the action of performing a dumbbell curl, it appears that the sensors and movement particularly relevant to Classes would be as follows: - throwing the elbows to the front (Class B): arm pitch - lifting the dumbbell only halfway (Class C): forearm pitch - lowering the dumbbell only halfway (Class D): forearm pitch - throwing the hips to the front (Class E): belt pitch - exactly according to the specification (Class A)</p>
 <p>So going to focus on measures of pitch first to explore how differ between the classes of dumbell curl. Looking at just a sample of three of the pitch sensors</p>

@@ -207,8 +207,7 @@ pedro_sm_pml_train &lt;- sm_pml_train[sm_pml_train$user_name == &quot;pedro&quot
 <h1>Features</h1>
 <p>Features to be included in the model are the measurements from the body sensors: - belt - arm - dumbbell - forearm</p>
 <div class="figure">
-<img src="on-body-sensing-schema.png" alt="http://groupware.les.inf.puc-rio.br/har#ixzz4n0PgI1eP" />
-<p class="caption"><a href="http://groupware.les.inf.puc-rio.br/har#ixzz4n0PgI1eP" class="uri">http://groupware.les.inf.puc-rio.br/har#ixzz4n0PgI1eP</a></p>
+<img src="ML_course_project_files/figure-html/on-body-sensing-schema.png" alt="http://groupware.les.inf.puc-rio.br/har#ixzz4n0PgI1eP" />
 </div>
 <p>From each sensor the following measures are available: - roll - pitch - yaw - total accel - gyros (x, y, z) - accel (x, y, z) - magnet (x, y, z)</p>
 <div class="figure">

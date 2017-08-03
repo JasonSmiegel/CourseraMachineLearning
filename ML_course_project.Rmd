@@ -3,8 +3,10 @@ title: 'Practical Machine Learning: Course Project'
 author: "Jason Schmidt"
 date: "July 16, 2017"
 output:
-  html_document: default
+  html_document:
+    self_contained: yes
   pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, echo=FALSE}
@@ -153,14 +155,6 @@ sm_pml_train<-sm_pml_train[,-c(1,3:7)];
 ##Take a look at the data
 str(sm_pml_train)
 
-##Split into dataset per user to facilitate processing
-adelmo_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="adelmo",]
-carlitos_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="carlitos",]
-charles_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="charles",]
-eurico_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="eurico",]
-jeremy_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="jeremy",]
-pedro_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="pedro",]
-
 ``` 
 
 #Features
@@ -171,7 +165,7 @@ Features to be included in the model are the measurements from the body sensors:
 - dumbbell
 - forearm
 
-![http://groupware.les.inf.puc-rio.br/har#ixzz4n0PgI1eP](on-body-sensing-schema.png)
+![http://groupware.les.inf.puc-rio.br/har#ixzz4n0PgI1eP](ML_course_project_files/figure-html/on-body-sensing-schema.png)
 
 From each sensor the following measures are available:
 - roll
@@ -182,7 +176,7 @@ From each sensor the following measures are available:
 - accel (x, y, z)
 - magnet (x, y, z)
 
-![https://commons.wikimedia.org/w/index.php?curid=2564219](200px-Flight_dynamics_with_text.png)
+![https://commons.wikimedia.org/w/index.php?curid=2564219](ML_course_project_files/figure-html/200px-Flight_dynamics_with_text.png)
 
 Thinking through the action of performing a dumbbell curl, it appears that the sensors and movement particularly relevant to Classes would be as follows:
 - throwing the elbows to the front (Class B): arm pitch
@@ -223,11 +217,33 @@ p
  
 Fortunately it appears that the range of measurement for each classe performed does not vary by date. 
 
-#Algorithm
+#Building the Model
 
-The algorithm needs to classify data into one of the 5 classes A to E.
+We will be constructing a model per user name in line with exploratory analysis which showed that ranges of measurements per user for each classe are quite different. The predictions of the individual models per user will then be combined to produce an overall prediction for the test set.
 
-Using a random forest
+I am choosing to build a random forest model for reason of accuracy. One of the drawbacks of this model as I have discovered from experience is that can take a long time to run. The model is constructed by bootstrapping samples and then at each split bootstrapping variables. In this way multiple trees are grown. The final model is consituted by voting on each.
+
+To avoid overfitting clouding the measure of accuracy, the model will be constructed using only the training set. We will perform cross validation by doing prediction on the test set. It is expected that the accuracy of prediction will be lower on the test set for reason of overfitting in model construction.
+
+First we split the train set into train and validation sets. Use Create Data Partition from caret package which does random sampling.
+
+```{r split}
+InTrain<-createDataPartition(y=sm_pml_train$classe,p=0.5,list=FALSE)
+
+sm_pml_train<-sm_pml_train[InTrain,]
+sm_pml_validat<-sm_pml_train[-InTrain,]
+
+##Split into dataset per user to facilitate processing
+adelmo_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="adelmo",]
+carlitos_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="carlitos",]
+charles_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="charles",]
+eurico_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="eurico",]
+jeremy_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="jeremy",]
+pedro_sm_pml_train<-sm_pml_train[sm_pml_train$user_name=="pedro",]
+
+```
+
+Now build models per user on the training set.
 
 ```{r training, cache=TRUE, tidy=TRUE}
 modAdelmo <- train(classe~ .,data=adelmo_sm_pml_train,method="rf",prox=TRUE)
@@ -250,11 +266,32 @@ modPedro$finalModel
 
 ```
 
-The results per participant (user name) look excellent -less than 1% error on ech of the models.
+The results per participant (user name) look excellent - less than 1% error on each of the models. However, the actual accuracy of prediction when cross validated on the validation set will be lower than this for reason of overfitting to the training set on which the model was built.
 
-#Evaluation
+Performing cross validation by predicting on the validation set, then assess accuracy of results using confusion matrix.
 
-Predict on the testing set as follows, per user name. Then combine the predictions to display the results.
+```{r crossval}
+predAdelmo<-predict(modAdelmo,newdata=sm_pml_validat[sm_pml_validat$user_name=="adelmo", ])
+predCarlitos<-predict(modCarlitos,newdata=sm_pml_validat[sm_pml_validat$user_name=="carlitos", ])
+predCharles<-predict(modCharles,newdata=sm_pml_validat[sm_pml_validat$user_name=="charles", ])
+predEurico<-predict(modEurico,newdata=sm_pml_validat[sm_pml_validat$user_name=="eurico", ])
+predJeremy<-predict(modJeremy,newdata=sm_pml_validat[sm_pml_validat$user_name=="jeremy", ])
+predPedro<-predict(modPedro,newdata=sm_pml_validat[sm_pml_validat$user_name=="pedro", ])
+
+confusionMatrix(predAdelmo,sm_pml_validat[sm_pml_validat$user_name=="adelmo","classe"])
+confusionMatrix(predCarlitos,sm_pml_validat[sm_pml_validat$user_name=="carlitos","classe"])
+confusionMatrix(predCharles,sm_pml_validat[sm_pml_validat$user_name=="charles","classe"])
+confusionMatrix(predEurico,sm_pml_validat[sm_pml_validat$user_name=="eurico","classe"])
+confusionMatrix(predJeremy,sm_pml_validat[sm_pml_validat$user_name=="jeremy","classe"])
+confusionMatrix(predPedro,sm_pml_validat[sm_pml_validat$user_name=="pedro","classe"])
+
+```
+
+Surprising 100% accuracy on the validation set. Would have expected a decline.
+
+#Prediction on the test set
+
+Predict on the testing per user name. Then combine the predictions to form a final results.
 
 ```{r prediction, cache=TRUE, tidy=TRUE}
 predAdelmo<-predict(modAdelmo,newdata=pml_testing[pml_testing$user_name=="adelmo",])
@@ -270,6 +307,6 @@ df<-rbind(df,data.frame(pml_testing[pml_testing$user_name=="charles",c("X1","use
 df<-rbind(df,data.frame(pml_testing[pml_testing$user_name=="eurico",c("X1","user_name")],classe=predEurico))
 df<-rbind(df,data.frame(pml_testing[pml_testing$user_name=="jeremy",c("X1","user_name")],classe=predJeremy))
 df<-rbind(df,data.frame(pml_testing[pml_testing$user_name=="pedro",c("X1","user_name")],classe=predPedro))
-df
+df[order(df$X1),]
 ```
 
